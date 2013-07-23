@@ -6,8 +6,7 @@ class Canvas
   attr_accessor :alt
   attr_accessor :html_options
   attr_accessor :settings
-  
-  
+  attr_accessor :last_response
   
   def initialize(id, width, height, alt = "", html_options = {})
     @id = id
@@ -26,7 +25,7 @@ class Canvas
         @settings.sockets << ws
       end
       ws.onmessage do |msg|
-        puts(msg)
+        puts("received message: #{msg}")
         process_message(msg)
       end
       ws.onclose do
@@ -39,7 +38,7 @@ class Canvas
     a_message = s_message.split(' ')
     command = a_message[0] #the first part of the message is the command
     params = a_message[1..(a_message.length-1)] #get the rest of the message
-    params = Hash[*params] if params.length%2 == 0#convert the array to a hash if applicable
+    params = Hash[*params] if command != "response"#convert the array to a hash if applicable
     respond_to(command, params)
   end
   
@@ -48,7 +47,8 @@ class Canvas
     when "mousedown"
       trigger_on_mousedown(params["x"], params["y"])
     when "response"
-      trigger_on_response(params.flatten.to_s)  
+      @last_response =  params.flatten.to_s
+      trigger_on_response(@last_response)  
     else
       puts "unimplemented method"
     end
@@ -84,6 +84,7 @@ class Canvas
     else
       puts "NOT IMPLEMENTED YET" #TODO: Implement gradiants and patterns
     end
+    return @last_response
   end
   
   def stroke_style(style)
@@ -92,44 +93,54 @@ class Canvas
     else
       puts "NOT IMPLEMENTED YET" #TODO: Implement gradiants and patterns
     end
+    return @last_response
   end
   
-  # def stroke_rect(x, y, width, height)
-    # send_msg "strokeRect #{x} #{y} #{width} #{height}"
-  # end
+  def create_linear_gradient(x0, y0, x1, y1, id)
+    send_msg("linearGradient #{x0} #{y0} #{x1} #{y1} #{id}")
+    return Gradient.new(id)
+  end
   
   def send_msg(msg)
-    puts msg
-    @settings.sockets.each{|s| s.send(msg)} if defined? @settings
+    puts "Sending message: #{msg}"
+    EM.next_tick {@settings.sockets.each{|s| s.send(msg)} if defined? @settings}
   end
   
   def method_missing(method_sym, *arguments, &block)
-    if method_array.include? method_sym.to_s
-      puts "yes"
+    if draw_method_array.include? method_sym.to_s
       send_msg "#{rubyToJsCommand(method_sym)} #{arguments.join(" ")}"
+    elsif return_method_array.include? method_sym.to_s
+      send_msg "#{rubyToJsCommand(method_sym)} #{arguments.join(" ")}"
+      return @last_response  
     else
-      puts method_sym
       super(method_sym, *arguments, &block)
     end
-    #super(method_sym, *arguments, &block)
   end
   
-  def method_array
-    return [
-      #Colors, Styles, and Shadows
-      #TODO: fill_style, stroke_style, shadow_color, shadow_blur, shadow_offset_x, shadow_offset_y
-      #TODO: create_linear_gradient, create_pattern, create_radial_gradient, add_color_stop
+  def return_method_array
+    return[
+       #Colors, Styles, and Shadows
+      "fill_style", "stroke_style", "shadow_color", "shadow_blur", "shadow_offset_x", "shadow_offset_y",
+      #TODO:"create_linear_gradient", "create_pattern", "create_radial_gradient", "add_color_stop",
       #Line Styles
-      #TODO: line_cap, line_join, line_width, miter_limit
+      "line_cap", "line_join", "line_width", "miter_limit",
+      #Paths
+      "isPointInPath",
+      #Text
+      "font", "text_align", "text_baseline"
+     ]
+  end
+  
+  def draw_method_array
+    return [
       #Rectangles
       "rect", "fill_rect", "stroke_rect", "clear_rect", 
       #Paths
       "fill", "stroke", "begin_path", "move_to", "close_path", "line_to", "clip", 
-      "quadratic_curve_to", "bezier_curve_to", "arc", "arc_to", #TODO: isPointInPath
+      "quadratic_curve_to", "bezier_curve_to", "arc", "arc_to",
       #Transformations
       "scale", "rotate", "translate", "transform", "set_transform",
       #Text
-      #TODO:font, text_align, text_baseline
       "fill_text", "stroke_text", "measure_text",
       #Image Drawing
       #TODO: draw_image
