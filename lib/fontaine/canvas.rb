@@ -46,6 +46,8 @@ class Canvas
     case s_command
     when "mousedown"
       trigger_on_mousedown(params["x"], params["y"])
+    when "keydown"
+      trigger_on_keydown(params["key_code"])  
     when "response"
       @last_response =  params.flatten.to_s
       trigger_on_response(@last_response)  
@@ -70,6 +72,14 @@ class Canvas
     @on_mousedown.call(x,y) if defined? @on_mousedown
   end
   
+  def on_keydown(&blk)
+    @on_keydown = blk 
+  end
+  
+  def trigger_on_keydown(key_code)
+    @on_keydown.call(key_code) if defined? @on_keydown
+  end
+  
   def on_response(&blk)
     @on_response = blk 
   end
@@ -82,7 +92,7 @@ class Canvas
     if style.is_a? String
       send_msg "fillStyle #{style}"
     else
-      puts "NOT IMPLEMENTED YET" #TODO: Implement gradiants and patterns
+      send_msg "fillStyleObject #{style.id}"
     end
     return @last_response
   end
@@ -91,14 +101,37 @@ class Canvas
     if style.is_a? String
       send_msg "strokeStyle #{style}"
     else
-      puts "NOT IMPLEMENTED YET" #TODO: Implement gradiants and patterns
+      send_msg "strokeStyleObject #{style.id}"
     end
     return @last_response
   end
   
   def create_linear_gradient(x0, y0, x1, y1, id)
-    send_msg("linearGradient #{x0} #{y0} #{x1} #{y1} #{id}")
-    return Gradient.new(id)
+    send_msg("createLinearGradient #{x0} #{y0} #{x1} #{y1} #{id}")
+    return Gradient.new(id, self)
+  end
+  
+  def create_pattern(image, pattern)
+    send_msg("createPattern #{image.id} #{pattern}")
+    return Pattern.new(id)
+  end
+  
+  def create_radial_gradient(x0, y0, r0, x1, y1, r1, id)
+    send_msg("createRadialGradient #{x0} #{y0} #{r0} #{x1} #{y1} #{r1} #{id}")
+    return Gradient.new(id, self)
+  end
+  
+  def create_image_data(id, *args)
+    return image_data.new(id, self, args)
+  end
+  
+  def get_image_data(id, x, y, width, height)
+    send_msg("getImageData #{x} #{y} #{width} #{height} #{id}")
+    return image_data.new(id, self)
+  end
+  
+  def put_image_data(image, x, y, dirty_x="", dirty_y="", dirty_width="", dirty_height="")
+    send_msg("putImageData #{image.id} #{x} #{y} #{dirty_x} #{dirty_y} #{dirty_width} #{dirty_height}")
   end
   
   def send_msg(msg)
@@ -121,13 +154,16 @@ class Canvas
     return[
        #Colors, Styles, and Shadows
       "fill_style", "stroke_style", "shadow_color", "shadow_blur", "shadow_offset_x", "shadow_offset_y",
-      #TODO:"create_linear_gradient", "create_pattern", "create_radial_gradient", "add_color_stop",
       #Line Styles
       "line_cap", "line_join", "line_width", "miter_limit",
       #Paths
       "isPointInPath",
       #Text
-      "font", "text_align", "text_baseline"
+      "font", "text_align", "text_baseline",
+      #Composting
+      "global_alpha", "global_composite_operation",
+      #Other
+      "to_data_url"
      ]
   end
   
@@ -143,13 +179,9 @@ class Canvas
       #Text
       "fill_text", "stroke_text", "measure_text",
       #Image Drawing
-      #TODO: draw_image
-      #Pixel Manipulation
-      #TODO: width, height, data, create_image_data, get_image_data, put_image_data
-      #Composting
-      #TODO: global_alpha, global_composite_operation
+      "draw_image",
       #Other
-      #TODO: save, restore, create_event, get_context, to_data_url
+      "save", "restore"
       ]
   end
   

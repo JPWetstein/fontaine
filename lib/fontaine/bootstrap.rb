@@ -40,9 +40,7 @@ module Sinatra
         def bootstrap_js
           output = ''
           Assets::ASSETS[:js].each do |file, _|
-            output += '<!--[if lt IE 9]>' if file == 'html5.js'
             output += '<script type="text/javascript" src="%s"></script>' % url('/js/%s' % file)
-            output += '<![endif]-->' if file == 'html5.js'
           end
           output
         end
