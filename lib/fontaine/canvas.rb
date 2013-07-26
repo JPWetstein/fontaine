@@ -45,12 +45,30 @@ class Canvas
   def respond_to(s_command, params = {})
     case s_command
     when "mousedown"
-      trigger_on_mousedown(params["x"], params["y"])
+      trigger_on_mousedown(params["x"], params["y"], params["button"])
+    when "mouseup"
+      trigger_on_mouseup(params["x"], params["y"], params["button"])
+    when "mouseover"
+      trigger_on_mouseover(params["x"], params["y"], params["button"]) 
+    when "mouseout"
+      trigger_on_mouseout(params["x"], params["y"], params["button"]) 
+    when "mousemove"
+      trigger_on_mousemove(params["x"], params["y"], params["button"])
+    when "touchstart"
+      trigger_on_touchstart(params["x"], params["y"])  
+    when "touchmove"
+      trigger_on_touchstart(params["x"], params["y"])
+    when "touchend"
+      trigger_on_touchstart(params["x"], params["y"])               
+    when "keyup"
+      trigger_on_keyup(params["key_code"])    
     when "keydown"
       trigger_on_keydown(params["key_code"])  
     when "response"
       @last_response =  params.flatten.to_s
-      trigger_on_response(@last_response)  
+      trigger_on_response(@last_response)
+    when "click"
+      trigger_on_click(params["x"], params["y"], params["button"])
     else
       puts "unimplemented method"
     end
@@ -63,31 +81,7 @@ class Canvas
     end
     return "<canvas id=\"#{@id}\" width=\"#{@width}\" height=\"#{@height}\" #{options}>#{@alt}</canvas>"
   end
-  
-  def on_mousedown(&blk)
-    @on_mousedown = blk 
-  end
-  
-  def trigger_on_mousedown(x,y)
-    @on_mousedown.call(x,y) if defined? @on_mousedown
-  end
-  
-  def on_keydown(&blk)
-    @on_keydown = blk 
-  end
-  
-  def trigger_on_keydown(key_code)
-    @on_keydown.call(key_code) if defined? @on_keydown
-  end
-  
-  def on_response(&blk)
-    @on_response = blk 
-  end
-  
-  def trigger_on_response(params)
-    @on_response.call(params) if defined? @on_response
-  end
-  
+
   def fill_style(style)
     if style.is_a? String
       send_msg "fillStyle #{style}"
@@ -140,7 +134,12 @@ class Canvas
   end
   
   def method_missing(method_sym, *arguments, &block)
-    if draw_method_array.include? method_sym.to_s
+    if canvas_array.include? method_sym.to_s.sub(/trigger_on_/, "")
+      variable_name = method_sym.to_s.sub(/trigger_/, "@")
+      instance_variable_get(variable_name).call(arguments) if instance_variable_defined?(variable_name)
+    elsif canvas_array.include? method_sym.to_s.sub(/on_/, "")
+      instance_variable_set("@#{method_sym}", block)
+    elsif draw_method_array.include? method_sym.to_s
       send_msg "#{rubyToJsCommand(method_sym)} #{arguments.join(" ")}"
     elsif return_method_array.include? method_sym.to_s
       send_msg "#{rubyToJsCommand(method_sym)} #{arguments.join(" ")}"
@@ -150,10 +149,14 @@ class Canvas
     end
   end
   
+  def canvas_array
+    return["response", "mousedown", "mouseup", "keyup", "keydown", "click", "mouseover", "mouseout", "mousemove"]
+  end
+  
   def return_method_array
     return[
        #Colors, Styles, and Shadows
-      "fill_style", "stroke_style", "shadow_color", "shadow_blur", "shadow_offset_x", "shadow_offset_y",
+      "shadow_color", "shadow_blur", "shadow_offset_x", "shadow_offset_y",
       #Line Styles
       "line_cap", "line_join", "line_width", "miter_limit",
       #Paths
