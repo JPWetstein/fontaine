@@ -6,18 +6,16 @@ module Sinatra
 
         ASSETS = {
           :js => [
-            ['fontaine.js']
+            'fontaine.js'
           ],
         }
         
         def self.generate_bootstrap_asset_routes(app)
           ASSETS.each do |kind, files|
             files.each do |file|
-              name = file[0]
+              name = file
               
-              #puts "/#{kind.to_s}/#{name}"
-              app.get "/#{kind.to_s}/#{name}" do
-                #puts File.join(File.dirname(__FILE__), 'assets', name)
+              app.get "/#{kind.to_s}/#{name}", :provides => kind do
                 File.read(File.join(File.dirname(__FILE__), 'assets', name))
               end
             end
