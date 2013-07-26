@@ -140,9 +140,9 @@ class Canvas
     elsif canvas_array.include? method_sym.to_s.sub(/on_/, "")
       instance_variable_set("@#{method_sym}", block)
     elsif draw_method_array.include? method_sym.to_s
-      send_msg "#{rubyToJsCommand(method_sym)} #{arguments.join(" ")}"
+      send_msg "#{ruby_to_js_command(method_sym)} #{arguments.join(" ")}"
     elsif return_method_array.include? method_sym.to_s
-      send_msg "#{rubyToJsCommand(method_sym)} #{arguments.join(" ")}"
+      send_msg "#{ruby_to_js_command(method_sym)} #{arguments.join(" ")}"
       return @last_response  
     else
       super(method_sym, *arguments, &block)
@@ -188,7 +188,7 @@ class Canvas
       ]
   end
   
-  def rubyToJsCommand(method_sym)
+  def ruby_to_js_command(method_sym)
     js_command = method_sym.to_s
     js_commands = js_command.split('_')
     if js_commands.size > 1
