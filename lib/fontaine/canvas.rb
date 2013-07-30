@@ -7,6 +7,7 @@ class Canvas
   attr_accessor :html_options
   attr_accessor :settings
   attr_accessor :last_response
+  attr_accessor :ws
   
   def initialize(id, width, height, alt = "", html_options = {})
     @id = id
@@ -21,11 +22,12 @@ class Canvas
     block.call
     request.websocket do |ws|
       ws.onopen do
-        ws.send("register ##{id}")
+        @ws = ws
+        @ws.send("register ##{id}")
         @settings.sockets << ws
       end
       ws.onmessage do |msg|
-        puts("received message: #{msg}")
+        puts("recieved message: #{msg}")
         process_message(msg)
       end
       ws.onclose do
@@ -55,22 +57,25 @@ class Canvas
     when "mousemove"
       trigger_on_mousemove(params["x"], params["y"], params["button"])
     when "touchstart"
-      trigger_on_touchstart(params["x"], params["y"])  
+      trigger_on_touchstart(params["x"], params["y"], params["id"])  
     when "touchmove"
-      trigger_on_touchstart(params["x"], params["y"])
+      trigger_on_touchstart(params["x"], params["y"], params["id"])
     when "touchend"
-      trigger_on_touchstart(params["x"], params["y"])               
+      trigger_on_touchstart(params["x"], params["y"], params["id"])               
     when "keyup"
       trigger_on_keyup(params["key_code"])    
     when "keydown"
-      trigger_on_keydown(params["key_code"])  
+      trigger_on_keydown(params["key_code"])
+    when "keypress"
+      trigger_on_keypress(params["key_code"])    
+        
     when "response"
       @last_response =  params.flatten.to_s
       trigger_on_response(@last_response)
     when "click"
       trigger_on_click(params["x"], params["y"], params["button"])
     else
-      puts "unimplemented method"
+      puts "unimplemented method #{s_command}"
     end
   end
   
@@ -130,7 +135,8 @@ class Canvas
   
   def send_msg(msg)
     puts "Sending message: #{msg}"
-    EM.next_tick {@settings.sockets.each{|s| s.send(msg)} if defined? @settings}
+    #EM.next_tick {@settings.sockets.each{|s| s.send(msg)} if defined? @settings}
+    EM.next_tick {@ws.send(msg)} if defined? @ws
   end
   
   def method_missing(method_sym, *arguments, &block)
@@ -150,7 +156,8 @@ class Canvas
   end
   
   def canvas_array
-    return["response", "mousedown", "mouseup", "keyup", "keydown", "click", "mouseover", "mouseout", "mousemove"]
+    return["response", "mousedown", "mouseup", "keyup", "keydown", "keypress", "click", "mouseover", 
+      "mouseout", "mousemove", "touchstart", "touchmove", "touchend"]
   end
   
   def return_method_array
