@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.version       = Fontaine::VERSION
   spec.authors       = ["J. Paul Wetstein"]
   spec.email         = ["Jeep.Wetstein@gmail.com"]
-  spec.description   = %q{Gem to help with HTML5 canvas}
-  spec.summary       = %q{Gem to help with HTML5 canvas}
+  spec.description   = %q{A bridge between Ruby and HTML5 canvas using Websocket}
+  spec.summary       = %q{A bridge between Ruby and HTML5 canvas using Websocket}
   spec.homepage      = ""
   spec.license       = "MIT"
 
