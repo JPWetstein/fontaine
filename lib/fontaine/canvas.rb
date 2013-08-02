@@ -114,7 +114,8 @@ class Canvas
     return "<canvas id=\"#{@id}\" width=\"#{@width}\" height=\"#{@height}\" #{options}>#{@alt}</canvas>"
   end
 
-  def fill_style(style="", &blk)
+  def fill_style(style="")
+     @attributes[:fill_style] = style if style != ""
     if style.is_a? String
       send_msg "fillStyle #{style}"
     else
@@ -127,6 +128,7 @@ class Canvas
   end
   
   def stroke_style(style="")
+    @attributes[:stroke_style] = style if style != ""
     if style.is_a? String
       send_msg "strokeStyle #{style}"
     else
@@ -180,7 +182,7 @@ class Canvas
       send_msg "#{ruby_to_js_command(method_sym)} #{arguments.join(" ")}"
     elsif return_method_array.include? method_sym.to_s
       send_msg "#{ruby_to_js_command(method_sym)} #{arguments.join(" ")}"
-      @attributes[method_sym] = arguments[0] if (!arguments[0].nil? && !@attributes[method_sum].nil?)
+      @attributes[method_sym] = arguments[0] if (!arguments[0].nil? && !@attributes[method_sym].nil?)
       return @attributes[method_sym]
     else
       super(method_sym, *arguments, &block)
