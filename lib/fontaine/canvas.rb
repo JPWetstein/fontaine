@@ -18,7 +18,7 @@ class Canvas
     @alt = alt
     @html_options = html_options
     @attributes = {
-      :fill_style => '#000000', 
+      :fill_style => "#000000", 
       :stroke_style => '#000000',
       :shadow_color => '#000000',
       :shadow_blur => 0,
@@ -42,12 +42,14 @@ class Canvas
     
     
     request.websocket do |ws|
-      
+      block.call
       ws.onopen do
-        block.call
+        
         @ws = ws
         @ws.send("register ##{id}")
         @settings.sockets << ws
+        
+        
         
       end
       ws.onmessage do |msg|
@@ -120,7 +122,7 @@ class Canvas
     end
     
     # return @last_response
-    return @attributes[fill_style]
+    return @attributes[:fill_style]
     
   end
   
@@ -131,7 +133,7 @@ class Canvas
       send_msg "strokeStyleObject #{style.id}"
     end
     # return @last_response
-    return @attributes[stroke_style]
+    return @attributes[:stroke_style]
   end
   
   def create_linear_gradient(x0, y0, x1, y1, id)
