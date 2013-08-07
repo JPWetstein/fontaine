@@ -18,6 +18,7 @@ class Canvas
     @alt = alt
     @html_options = html_options
     @attributes = {
+      #set the initial styles
       :fill_style => "#000000", 
       :stroke_style => '#000000',
       :shadow_color => '#000000',
@@ -35,22 +36,16 @@ class Canvas
       :global_composite_operation => 'source-over'
       
       }
+    yield self if block_given?    
   end
   
-  def start(request, settings, host = 'localhost', port = 4567, &block)  
+  def listen(request, settings)  
     @settings = settings 
-    
-    
     request.websocket do |ws|
-      block.call
       ws.onopen do
-        
         @ws = ws
         @ws.send("register ##{id}")
         @settings.sockets << ws
-        
-        
-        
       end
       ws.onmessage do |msg|
         #puts("recieved message: #{msg}")
@@ -61,7 +56,6 @@ class Canvas
         @settings.sockets.delete(ws)
       end
     end
-    
   end
   
   def process_message(s_message)

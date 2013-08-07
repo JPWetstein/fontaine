@@ -1,6 +1,6 @@
 # Fontaine
 
-TODO: Write a gem description
+A bridge between Ruby and HTML5 canvas **for Sinatra** using Websocket.
 
 ## Installation
 
@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+
 
 ## Contributing
 
@@ -27,3 +27,5 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+##Future Features
