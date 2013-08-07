@@ -78,12 +78,15 @@ class Canvas
       trigger_on_mouseout(params["x"], params["y"]) 
     when "mousemove"
       trigger_on_mousemove(params["x"], params["y"])
-    when "touchstart"
-      trigger_on_touchstart(params["x"], params["y"], params["id"])  
-    when "touchmove"
-      trigger_on_touchstart(params["x"], params["y"], params["id"])
-    when "touchend"
-      trigger_on_touchstart(params["x"], params["y"], params["id"])               
+      
+   ##Very glitchy right now. Need to fix this some time
+
+    # when "touchstart"
+      # trigger_on_touchstart(params["x"], params["y"], params["id"])  
+    # when "touchmove"
+      # trigger_on_touchstart(params["x"], params["y"], params["id"])
+    # when "touchend"
+      # trigger_on_touchstart(params["x"], params["y"], params["id"])               
     when "keyup"
       trigger_on_keyup(params["key_code"])    
     when "keydown"
