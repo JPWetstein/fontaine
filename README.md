@@ -72,20 +72,20 @@ Just put this in your pipe:
 	require './sample'
 	run Sample
 	
-and smoke it! (After you\'ve put jquery-1.9.1.js into /public/javascripts/)
+and smoke it! (After you've put jquery-1.9.1.js into /public/javascripts/)
 
     rackup sample_config.ru
 
-Ok, that\'s pretty complicated. Let me give you some further explanations. We\'ll start with  
+Ok, that's pretty complicated. Let me give you some further explanations. We'll start with  
 making a new Canvas:
 
     Fontaine::Canvas.new("TEST_CANVAS", 500, 500, "Your browser does not support the canvas tag", 
       :style => "border:1px solid #000000;")
       
 This is pretty simple. The first parameter is simply the id of the canvas you will be displaying. The second
-and third parameters are the width and height of the canvas. The fourth is the alt text if the user\'s browser 
-doesn\'t support <canvas>. Finally, the fifth parameter is a hash of any other html options you 
-wish to add to the canvas. In this case, I\'m giving it a border.
+and third parameters are the width and height of the canvas. The fourth is the alt text if the user's browser 
+doesn't support <canvas>. Finally, the fifth parameter is a hash of any other html options you 
+wish to add to the canvas. In this case, I'm giving it a border.
 
 Next, while initializing, you can give it a block of code to execute when the user takes actions related to the canvas.
 (Note, you can do this at any point once the canvas is initialized by passing a block to any of the action methods). 
@@ -93,14 +93,14 @@ The block will be whatever code you want to run in response to those actions. In
 a few parameters from the javascript event call. For more information on specific actions available and their parameters, see 
 the **Action Methods** section.
 
-That\'s only half the story, though. You\'ve got to be able to draw on the canvas! You can use any of the methods from 
-[here](http://www.w3schools.com/tags/ref_canvas.asp) and they will work pretty much how you\'d expect, with a couple 
-exceptions (see **Exceptions and Issues**). Most of the time, you simply can directly use a \'rubyfied\' version of the same
+That's only half the story, though. You've got to be able to draw on the canvas! You can use any of the methods from 
+[here](http://www.w3schools.com/tags/ref_canvas.asp) and they will work pretty much how you'd expect, with a couple 
+exceptions (see **Exceptions and Issues**). Most of the time, you simply can directly use a 'rubyfied' version of the same
 method. For example, instead of calling @canvas.fillRect(), you call @canvas.fill_rect. The other major exception is that rather
-than setting canvas attributes with \'=\', you\'ll simply use a method of the same name (canvas.fill_style("#FF0000"), 
+than setting canvas attributes with '=', you'll simply use a method of the same name (canvas.fill_style("#FF0000"), 
 not canvas.fill_style = "#FF0000")
 
-Alright, so you\'ve got your action methods set up and you know how to draw on the canvas, you just have to get it going. In the
+Alright, so you've got your action methods set up and you know how to draw on the canvas, you just have to get it going. In the
 sinatra file this is pretty simple. When you get a request, listen! Pass in the request and the sinatra settings.
 
     if request.websocket?
@@ -113,7 +113,7 @@ The view is almost as easy:
     = bootstrap_fontaine
     = @canvas.display
     
-Bam! You need jquery. I\'ve tested on 1.9.1, but not any other versions. bootstrap_fontaine gives you access to the fontaine javascript
+Bam! You need jquery. I've tested on 1.9.1, but not any other versions. bootstrap_fontaine gives you access to the fontaine javascript
 file. @canvas.display will display the canvas.
     
 ## Action Methods
@@ -145,15 +145,15 @@ the value)
 ## Drawing methods
 
 You can use any of the methods from 
-[here](http://www.w3schools.com/tags/ref_canvas.asp) and they will work pretty much how you\'d expect, with a couple 
-exceptions (see **Exceptions and Issues**). Most of the time, you simply can directly use a \'rubyfied\' version of the same
+[here](http://www.w3schools.com/tags/ref_canvas.asp) and they will work pretty much how you'd expect, with a couple 
+exceptions (see **Exceptions and Issues**). Most of the time, you simply can directly use a 'rubyfied' version of the same
 method. For example, instead of calling @canvas.fillRect(), you call @canvas.fill_rect. The other major exception is that rather
-than setting canvas attributes with \'=\', you\'ll simply use a method of the same name (canvas.fill_style("#FF0000"), 
+than setting canvas attributes with '=', you'll simply use a method of the same name (canvas.fill_style("#FF0000"), 
 not canvas.fill_style = "#FF0000")
 
 ## Exceptions and Issues
 
-Any "Drawing" method that returns an attribute doesn\'t "really" give you the attribute. It returns the value of the attribute from the 
+Any "Drawing" method that returns an attribute doesn't "really" give you the attribute. It returns the value of the attribute from the 
 last time you changed it from the ruby Canvas object. In other words, if I call 
 
     @canvas.fill_style("blue")
@@ -168,11 +168,11 @@ in the javascript, when I call
     
 in ruby, it'll still return "blue". 
 
-Basically, this is because websocket is impatient. It doesn\'t have a protocol for waiting for the javascript to return information before
+Basically, this is because websocket is impatient. It doesn't have a protocol for waiting for the javascript to return information before
 executing the next line of code. So, I faked it and track everything on the fontaine canvas object. 
 
-If you stick to just using the fontaine canvas methods, this mostly doesn\'t have an impact, **except** that the get_image_data method isn\'t
-implemented, and doesn\'t work right now. Don\'t even try.
+If you stick to just using the fontaine canvas methods, this mostly doesn't have an impact, **except** that the get_image_data method isn't
+implemented, and doesn't work right now. Don't even try.
 
 ## Contributing
 
