@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["Jeep.Wetstein@gmail.com"]
   spec.description   = %q{A bridge between Ruby and HTML5 canvas using Websocket}
   spec.summary       = %q{A bridge between Ruby and HTML5 canvas using Websocket}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/JPWetstein/fontaine"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
