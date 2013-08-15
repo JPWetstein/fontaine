@@ -134,8 +134,8 @@ file. @canvas.display will display the canvas.
 
 **on_keydown** Yields key_code
 
-(Note, this is not the ascii value of the key pressed. See javascript documentation on the difference between keyCode and   
-the value)
+(Note, this is not the ascii value of the key pressed. See javascript documentation on the difference between the
+keyCode and the value)
 
 **on_keyup** Yields key_code
 
