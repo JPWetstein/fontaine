@@ -153,6 +153,10 @@ not canvas.fill_style = "#FF0000")
 
 ## Exceptions and Issues
 
+**Currently, all drawing methods must be called within an Action Method block.** 
+
+**Actions Method blocks may only be called during initialization.**
+
 Any "Drawing" method that returns an attribute doesn't "really" give you the attribute. It returns the value of the attribute from the 
 last time you changed it from the ruby Canvas object. In other words, if I call 
 
@@ -186,7 +190,9 @@ implemented, and doesn't work right now. Don't even try.
 
 **Soon**
 
- * Implement on_keystroke methods for each key. For example, on_keystroke_a.   
+ * Implement on_keystroke methods for each key. For example, on_keystroke_a or on_keystroke("a").
+ * Allow changing of action methods outside of initialize  
+ * Allow calling of drawing methods outside of action blocks  
 
 **Later**
 
