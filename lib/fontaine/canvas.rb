@@ -46,6 +46,7 @@ class Canvas
         @ws = ws
         @ws.send("register ##{id}")
         @settings.sockets << ws
+        trigger_on_open
       end
       ws.onmessage do |msg|
         #puts("recieved message: #{msg}")
@@ -188,7 +189,7 @@ class Canvas
   
   def canvas_array
     return["response", "mousedown", "mouseup", "keyup", "keydown", "keypress", "click", "mouseover", 
-      "mouseout", "mousemove", "touchstart", "touchmove", "touchend"]
+      "mouseout", "mousemove", "touchstart", "touchmove", "touchend", "open"]
   end
   
   def return_method_array

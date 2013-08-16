@@ -120,6 +120,8 @@ file. @canvas.display will display the canvas.
 
 **NOTE: All coordinates are in relation to the canvas, not to the document** 0, 0 is the top-left corner of the canvas, for example.
 
+**on_open** Yields nothing- runs when the document is created
+
 **on_click** Yields x, y, and button
 
 **on_mousedown** Yields x, y, and button
