@@ -1,6 +1,6 @@
 # Fontaine
 
-A bridge between Ruby and HTML5 canvas **for Sinatra** using Websocket. Basically, this allows you to make <canvas> based
+A bridge between Ruby and HTML5 canvas **for Sinatra** using Websocket. Basically, this allows you to make \<canvas\> based
 apps in Ruby. 
 
 ## Installation
