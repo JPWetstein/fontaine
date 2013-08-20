@@ -175,8 +175,8 @@ in ruby, it'll still return "blue".
 Basically, this is because websocket is impatient. It doesn't have a protocol for waiting for the javascript to return information before
 executing the next line of code. So, I faked it and track everything on the fontaine canvas object. 
 
-If you stick to just using the fontaine canvas methods, this mostly doesn't have an impact, **except** that the get_image_data method isn't
-implemented, and doesn't work right now. Don't even try.
+If you stick to just using the fontaine canvas methods, this mostly doesn't have an impact, **except** that the get_image_data method, 
+the measure_text method, and the "Pixel Manipulation" methods aren't  working right now. Don't even try.
 
 ## Contributing
 
