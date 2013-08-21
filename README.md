@@ -38,14 +38,12 @@ Just put this in your pipe:
 	      :style => "border:1px solid #000000;") do |canvas|
 	        
 	        canvas.on_click do |x, y, button| #when there's a click, do this:
-	          canvas.rect(x.to_i-25, y.to_i-25, 50, 50)
-	          
 	          if button.eql? '0' #left click will give you a solid red rectangle
 	            canvas.fill_style("#FF0000")
-	            canvas.fill
+	            canvas.fill_rect(x.to_i-25, y.to_i-25, 50, 50)
 	          else #right click will give you the outline of a blue rectangle
 	            canvas.stroke_style("blue")
-	            canvas.stroke
+	            canvas.stroke_rect(x.to_i-25, y.to_i-25, 50, 50)
 	          end
 	          
 	        end
